@@ -13,29 +13,32 @@ using vi = vector<int>;
 using si = set<int>;
 using card = struct card {
 	int id;
-	string type;
+	char type;
 	int n;
 };
+
+si occupied;
+string type;
 
 int main() {
 	FASTIO;
 
 	int n, t; cin >> n >> t;
-	
-	vi turn(t); 
+
+	vi turn(t);
 	for (int i = 0; i < t; i++) cin >> turn[i];
 
 	vector<card> deck(t);
 	for (int i = 0; i < t; i++) {
-		cin >> deck[i].id >> deck[i].type;
-		if (deck[i].type == "next") continue;
+		cin >> deck[i].id >> type;
+		deck[i].type = type[0];
+		if (deck[i].type == 'n') continue;
 		cin >> deck[i].n;
 	}
 	reverse(deck.begin(), deck.end());
 
 	vector<card> players(n);
 	vector<si> places(n);
-	si occupied;
 
 	for (int i = 0; i < t; i++) {
 		int p = turn[i] - 1;
@@ -45,11 +48,11 @@ int main() {
 		}
 		card& c = players[p];
 		cout << c.id << endl;
-		if (c.type == "next") {
+		if (c.type == 'n') {
 			c = card();
 			continue;
 		}
-		else if (c.type == "acquire") {
+		else if (c.type == 'a') {
 			if (occupied.find(c.n) == occupied.end()) {
 				places[p].insert(c.n);
 				occupied.insert(c.n);
