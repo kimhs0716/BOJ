@@ -1,37 +1,19 @@
+# 아래 링크에서 힌트를 얻음
+# https://www.acmicpc.net/board/view/57079
+
 import sys
 input = lambda: sys.stdin.readline().rstrip()
 
-from pprint import pprint
+def count3(n):
+    ret = 0
+    while True:
+        if n % 3: return ret
+        n //= 3
+        ret += 1
 
 n = int(input())
 arr = list(map(int, input().split()))
-adj = [[0] * n for _ in range(n)]
+arr.sort()
+arr.sort(key=count3, reverse=True)
 
-for i in range(n):
-    for j in range(n):
-        if arr[i] == arr[j] * 3 or arr[i] * 2 == arr[j]:
-            adj[i][j] = 1
-
-# pprint(adj)
-
-def dfs(cur, visited, depth=0, path=None):
-    if path is None:
-        path = []
-    # print(cur, path, depth)
-    if depth == n - 1:
-        print(*map(lambda x: arr[x], path))
-        exit(0)
-    for node in range(n):
-        if adj[cur][node] == 1 and node not in visited:
-            visited.add(node)
-            path.append(node)
-            dfs(node, visited, depth + 1, path)
-            path.pop()
-            visited.remove(node)
-
-for i in range(n):
-    visited = set()
-    path = []
-    visited.add(i)
-    path.append(i)
-    dfs(i, visited, 0, path)
+print(*arr)
