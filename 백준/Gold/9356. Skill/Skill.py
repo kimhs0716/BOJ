@@ -11,9 +11,11 @@ for _ in range(tc):
     for i in range(2, n + 1):
         if i >= len(dp):
             dp.append([0] * 10)
-        s = 0
-        for j in range(10):
-            s = (s + dp[i - 1][j]) % mod
-            dp[i][j] = s
+            s = 0
+            for j in range(10):
+                s = (s + dp[i - 1][j]) % mod
+                dp[i][j] = s
+        else:
+            continue
 
     print(sum(dp[n]) % mod)
