@@ -1,17 +1,17 @@
 import sys
 input = lambda: sys.stdin.readline().rstrip()
 
-from collections import Counter
-
 
 s = input()
 n = len(s)
-sarr = [Counter()]
+sarr = [[0] * 26]
 for i in range(n):
-    sarr.append(sarr[-1] + Counter({s[i]: 1}))
+    cur = sarr[-1][:]
+    cur[ord(s[i]) - 97] += 1
+    sarr.append(cur)
 q = int(input())
 for _ in range(q):
     ch, l, r = input().split()
     l = int(l)
     r = int(r)
-    print((sarr[r + 1] - sarr[l])[ch])
+    print(sarr[r + 1][ord(ch) - 97] - sarr[l][ord(ch) - 97])
