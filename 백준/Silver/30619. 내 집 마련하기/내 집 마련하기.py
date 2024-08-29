@@ -10,6 +10,7 @@ except FileNotFoundError:
 n = int(input())
 arr = list(map(int, input().split()))
 
+result = []
 m = int(input())
 for _ in range(m):
     l, r = map(int, input().split())
@@ -19,4 +20,6 @@ for _ in range(m):
         if l <= carr[i] <= r:
             carr[i] = cur
             cur += 1
-    print(*carr)
+    result.append(' '.join(map(str, carr)))
+    result.append('\n')
+print(''.join(result))
