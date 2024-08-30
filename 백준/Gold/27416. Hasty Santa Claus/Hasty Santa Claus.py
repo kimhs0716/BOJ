@@ -8,30 +8,30 @@ try:
 except FileNotFoundError:
     pass
 
+import heapq
 
 n, k = map(int, input().split())
 arr = []
 for i in range(n):
     a, b = map(int, input().split())
     arr.append([a, b, i])
-arr.sort(key=lambda x: (x[0], x[1]))
 
-# print(*arr, sep='\n')
+arr.sort()
 
 ans = dict()
+pq = []
+
 idx = 0
-t = 1
-while idx < n:
-    c = 0
-    while c < k and arr:
-        arr.sort(key=lambda x: (x[0] > t, x[1]))
-        if arr[0][0] > t: break
-        ans[arr[0][2]] = t
-        del arr[0]
-        c += 1
-    t += 1
-    if t >= 32: break
-    # print(arr)
+for t in range(1, 32):
+    while idx < n and arr[idx][0] == t:
+        heapq.heappush(pq, (arr[idx][1], arr[idx][2]))
+        idx += 1
+    cnt = 0
+    # print(pq)
+    while cnt < k and pq:
+        b, _id = heapq.heappop(pq)
+        ans[_id] = t
+        cnt += 1
 
 for i in range(n):
     print(ans[i])
