@@ -28,7 +28,7 @@ for i in range(len(arr) - 1):
     _next = arr[i + 1][0]
     c = _sum / (2 * A)
     if _cur <= c <= _next:
-       cc = -A * c ** 2 + c * _sum - _sum2
-       if cc > ans: ans = cc
+        cc = -A * c ** 2 + c * _sum - _sum2
+        if cc > ans: ans = cc
 
 print(ans)
