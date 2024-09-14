@@ -41,11 +41,17 @@ int main() {
 
     ll n, p; cin >> n >> p;
     ll d = p - n;
-    ll s = (d % 2) ? -1 : 1;
-    ll fd = fac(d - 1, p);
-    ll invf = inv(fd, p);
-    ll ans = s * invf % p;
-    if (ans < 0) ans += p;
+    ll ans;
+    if (d < n) {
+        ll s = (d % 2) ? -1 : 1;
+        ll fd = fac(d - 1, p);
+        ll invf = inv(fd, p);
+        ans = s * invf % p;
+        if (ans < 0) ans += p;
+    }
+    else {
+        ans = fac(n, p);
+    }
 
     cout << ans << endl;
 
