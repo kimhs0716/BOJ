@@ -45,7 +45,7 @@ for _ in range(int(input())):
     f1 = make_f(a1, b1)
     f2 = make_f(b2, a2)
 
-    ans = integral(f1, 0, x, 1000000)
-    ans += integral(f2, 0, y, 1000000)
+    ans = integral(f1, 0, x, 100000)
+    ans += integral(f2, 0, y, 100000)
     ans -= x * y
     print(4 * ans)
