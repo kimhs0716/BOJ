@@ -1,0 +1,1 @@
+print(eval('0'+'^int(input())'*5))
