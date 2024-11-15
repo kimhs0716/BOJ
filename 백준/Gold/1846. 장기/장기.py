@@ -14,18 +14,8 @@ n = int(input())
 
 if n <= 3:
     print(-1)
-elif n % 2 == 0:
-    k = n // 2 - 1
-    i = 2
-    for _ in range(k):
-        print(i)
-        i += 1
-    i += 1
-    for _ in range(k):
-        print(i)
-        i += 1
-    print(1, k + 2, sep='\n')
 else:
-    for i in range(2, n - 1):
-        print(i)
-    print(1, n, n - 1, sep='\n')
+    ans = [i % n + 1 for i in range(1, n + 1)]
+    if n % 2 == 0: ans[n // 2 - 1], ans[-1] = ans[-1], ans[n // 2 - 1]
+    else: ans[-1], ans[-3] = ans[-3], ans[-1]
+    print(*ans, sep='\n')
