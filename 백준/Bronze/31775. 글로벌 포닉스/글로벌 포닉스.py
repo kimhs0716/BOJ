@@ -1,0 +1,1 @@
+print('GPLOONBIAXL'[set(input()[0]for _ in'_'*3)!=set('lkp')::2])
