@@ -1,0 +1,1 @@
+print((sum(map(int, input().split())) + sum(map(int, input().split())) + 2) % 4 + 1)
