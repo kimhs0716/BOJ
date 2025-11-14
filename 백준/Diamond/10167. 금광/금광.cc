@@ -110,8 +110,9 @@ struct SEG {
         seg[i].best = max({left.best, right.best, left.r+right.l});
     }
     void update(ll tar, ll val) {
+        arr[tar] += val;
+        val = arr[tar];
         update(1, 0, n-1, tar, val);
-        arr[tar] = val;
     }
 };
 
@@ -128,9 +129,15 @@ void solve(ll testcase) {
         cin>>x>>y>>w;
     }
     sort(arr.begin(), arr.end());
+    ll idx = 0, prev = arr[0][0];
     for (i=0;i<n;i++) {
         auto [x, y, w] = arr[i];
-        y2xw[y].push_back({i, w});
+        // cout<<x<<' '<<y<<' '<<w<<' '<<idx<<endl;
+        if (x!=prev) {
+            prev = x;
+            idx++;
+        }
+        y2xw[y].push_back({idx, w});
     }
     for (auto &[y, v] : y2xw)
         sort(v.begin(), v.end());
@@ -140,6 +147,7 @@ void solve(ll testcase) {
         for (auto hi = lo; hi != y2xw.end(); hi++) {
             for (auto [x, w] : hi->second)
                 seg.update(x, w);
+            // cout<<seg.arr<<endl;
             ans = max(ans, seg.query(0, n-1).best);
         }
     }
