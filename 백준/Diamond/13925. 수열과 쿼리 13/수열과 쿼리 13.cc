@@ -63,7 +63,7 @@ struct LAZY {
         seg[i] = (seg[i<<1] + seg[i<<1|1]) % MOD;
     }
     void update_lazy(ll i, ll l, ll r) {
-        if (add[i] || mul[i]) {
+        if (add[i] || mul[i]!=1) {
             ll len = r-l+1;
             seg[i] = seg[i] * mul[i] % MOD;
             seg[i] = (seg[i] + len*add[i]) % MOD;
