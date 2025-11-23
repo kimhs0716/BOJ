@@ -48,44 +48,54 @@ constexpr ll INF = 1e15;
 
 struct SEG {
     ll n;
-    vector<pll> seg;
-    vl arr;
-    SEG(vl &arr) : n(arr.size()), arr(arr), seg(n<<2, {INF, -1}) {
+    vl arr, seg;
+    SEG(vl &arr) : n(arr.size()), arr(arr), seg(n<<2) {
         init(1, 0, n-1);
     }
     void init(ll i, ll l, ll r) {
         if (l==r) {
-            seg[i] = {arr[l], l};
+            seg[i] = l;
             return;
         }
         ll m=l+r>>1;
         init(i<<1, l, m);
         init(i<<1|1, m+1, r);
-        seg[i] = min(seg[i<<1], seg[i<<1|1]);
+        ll left = seg[i<<1], right = seg[i<<1|1];
+        if (left==-1) seg[i] = right;
+        else if (right==-1) seg[i] = left;
+        else if (arr[left]==arr[right]) seg[i] = min(left, right);
+        else seg[i] = arr[left]<arr[right] ? left : right;
     }
     void update(ll i, ll l, ll r, ll tar, ll val) {
         if (l==r) {
-            seg[i] = {val, l};
+            arr[tar] = val;
             return;
         }
         ll m=l+r>>1;
         if (tar<=m) update(i<<1, l, m, tar, val);
         else update(i<<1|1, m+1, r, tar, val);
-        seg[i] = min(seg[i<<1], seg[i<<1|1]);
+        ll left = seg[i<<1], right = seg[i<<1|1];
+        if (left==-1) seg[i] = right;
+        else if (right==-1) seg[i] = left;
+        else if (arr[left]==arr[right]) seg[i] = min(left, right);
+        else seg[i] = arr[left]<arr[right] ? left : right;
     }
     void update(ll tar, ll val) {
         update(1, 0, n-1, tar, val);
     }
-    pll query(ll i, ll l, ll r, ll s, ll e) {
+    ll query(ll i, ll l, ll r, ll s, ll e) {
         if (s<=l && r<=e) return seg[i];
-        if (r<s || e<l) return {INF, -1};
+        if (r<s || e<l) return -1;
         ll m=l+r>>1;
-        pll left = query(i<<1, l, m, s, e);
-        pll right = query(i<<1|1, m+1, r, s, e);
-        return min(left, right);
+        ll left = query(i<<1, l, m, s, e);
+        ll right = query(i<<1|1, m+1, r, s, e);
+        if (left==-1) return right;
+        else if (right==-1) return left;
+        else if (arr[left]==arr[right]) return min(left, right);
+        else return arr[left]<arr[right] ? left : right;
     }
     ll query(ll s, ll e) {
-        return query(1, 0, n-1, s, e).second;
+        return query(1, 0, n-1, s, e);
     }
 };
 
