@@ -1,0 +1,1 @@
+for n in map(int,[*open(0)][1:]):print(n,f'is {"not "*(n%6!=0)}nasty')
