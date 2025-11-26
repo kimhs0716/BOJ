@@ -96,28 +96,34 @@ void solve(ll tc) {
     };
 
     dfs(0, -1);
+
     ll root = 0;
     ll root_col = 0;
     if (best[root][1] > best[root][root_col]) root_col = 1;
     if (best[root][2] > best[root][root_col]) root_col = 2;
 
     ll ans = best[root][root_col];
-
     vl col(n);
     col[root] = root_col;
 
-    function<void(ll,ll)> build = [&](ll cur, ll par) {
+    vector<pll> st;
+    st.push_back({root, -1});
+
+    while (!st.empty()) {
+        auto [cur, par] = st.back();
+        st.pop_back();
+
         ll c = col[cur];
-        for (ll i = 0; i < adj[cur].size(); i++) {
+
+        for (i = 0; i < adj[cur].size(); i++) {
             ll nxt = adj[cur][i];
             if (nxt == par) continue;
+
             ll cc = prev[cur][c][i];
             col[nxt] = cc;
-            build(nxt, cur);
+            st.push_back({nxt, cur});
         }
-    };
-
-    build(root, -1);
+    }
 
     string s(n, 'R');
     for (i = 0; i < n; i++) {
