@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 
 #include <utility>
-#pragma GCC optimize ("O0,unroll-loops")
+#pragma GCC optimize ("O3,unroll-loops")
 #pragma GCC target ("avx,avx2,fma")
 
 using namespace std;
