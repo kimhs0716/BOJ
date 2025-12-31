@@ -1,0 +1,1 @@
+print(sorted(map(int, [input() for _ in '*'*3]))[1])
