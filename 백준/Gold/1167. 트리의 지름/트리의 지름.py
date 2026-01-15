@@ -17,19 +17,20 @@ for _ in range(n):
         adj[u-1].append((t[idx]-1, t[idx+1]))
         idx += 2
 
-dist = [0] * n
-def dfs(cur, par, d):
-    dist[cur] = d
+l = [0]*n
+d = [0]*n
+
+def dfs(cur, par):
+    c0, c1 = 0, 0
     for nxt, w in adj[cur]:
         if nxt == par: continue
-        dfs(nxt, cur, d+w)
+        dfs(nxt, cur)
+        l[cur] = max(l[cur], l[nxt]+w)
+        d[cur] = max(d[cur], d[nxt])
+        c1 = max(c1, l[nxt]+w)
+        if c0<c1: c0, c1 = c1, c0
+    d[cur] = max(d[cur], c0+c1)
 
-dfs(0, -1, 0)
-M = max(dist)
-for i in range(n):
-    if dist[i] == M:
-        break
+dfs(0, -1)
 
-dfs(i, -1, 0)
-
-print(max(dist))
+print(max(d))
