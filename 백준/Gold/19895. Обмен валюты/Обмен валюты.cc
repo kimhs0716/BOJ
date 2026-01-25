@@ -66,31 +66,24 @@ void solve(ll tc) {
     for (i=0;i<n;i++) {
         ll x = arr[i].first;
         ll pos = lower_bound(arr.begin(), arr.end(), make_pair<ll, ll>(p*x, -1)) - arr.begin();
-        if (pos-1>=0 && pos-1!=i) {
-            ll y = arr[pos-1].first;
-            ld diff = fabsl((ld)y/x-p);
-            if (diff<min_diff) {
-                min_diff = diff;
-                a=i;
-                b=pos-1;
+        for (j=0;j<=2;j++) {
+            if (pos-j>=0 && pos-j!=i) {
+                ll y = arr[pos-j].first;
+                ld diff = fabsl((ld)y/x-p);
+                if (diff<min_diff) {
+                    min_diff = diff;
+                    a=i;
+                    b=pos-j;
+                }
             }
-        }
-        if (pos<n && pos!=i) {
-            ll y = arr[pos].first;
-            ld diff = fabsl((ld)y/x-p);
-            if (diff<min_diff) {
-                min_diff = diff;
-                a=i;
-                b=pos;
-            }
-        }
-        if (pos+1<n && pos+1!=i) {
-            ll y = arr[pos+1].first;
-            ld diff = fabsl((ld)y/x-p);
-            if (diff<min_diff) {
-                min_diff = diff;
-                a=i;
-                b=pos+1;
+            if (pos+j<n && pos+j!=i) {
+                ll y = arr[pos+j].first;
+                ld diff = fabsl((ld)y/x-p);
+                if (diff<min_diff) {
+                    min_diff = diff;
+                    a=i;
+                    b=pos+j;
+                }
             }
         }
     }
