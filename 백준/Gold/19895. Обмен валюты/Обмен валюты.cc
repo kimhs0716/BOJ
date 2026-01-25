@@ -55,17 +55,19 @@ void preprocess() {
 void solve(ll tc) {
     ll i, j;
     ll n, p; cin>>n>>p;
-    vl arr(n); cin>>arr;
-    map<ll, ll> idx;
-    for (i=0;i<n;i++) idx[arr[i]] = i;
+    vp arr(n);
+    for (i=0;i<n;i++) {
+        cin>>arr[i].first;
+        arr[i].second = i+1;
+    }
     sort(arr.begin(), arr.end());
     ll a=-1, b=-1;
     ld min_diff = INF;
     for (i=0;i<n;i++) {
-        ll x = arr[i];
-        ll pos = lower_bound(arr.begin(), arr.end(), p*x) - arr.begin();
-        if (pos-1>=0) {
-            ll y = arr[pos-1];
+        ll x = arr[i].first;
+        ll pos = lower_bound(arr.begin(), arr.end(), make_pair<ll, ll>(p*x, -1)) - arr.begin();
+        if (pos-1>=0 && pos-1!=i) {
+            ll y = arr[pos-1].first;
             ld diff = fabsl((ld)y/x-p);
             if (diff<min_diff) {
                 min_diff = diff;
@@ -73,8 +75,8 @@ void solve(ll tc) {
                 b=pos-1;
             }
         }
-        {
-            ll y = arr[pos];
+        if (pos<n && pos!=i) {
+            ll y = arr[pos].first;
             ld diff = fabsl((ld)y/x-p);
             if (diff<min_diff) {
                 min_diff = diff;
@@ -82,8 +84,8 @@ void solve(ll tc) {
                 b=pos;
             }
         }
-        if (pos+1<n) {
-            ll y = arr[pos+1];
+        if (pos+1<n && pos+1!=i) {
+            ll y = arr[pos+1].first;
             ld diff = fabsl((ld)y/x-p);
             if (diff<min_diff) {
                 min_diff = diff;
@@ -92,7 +94,7 @@ void solve(ll tc) {
             }
         }
     }
-    cout<<idx[arr[b]]+1<<' '<<idx[arr[a]]+1<<endl;
+    cout<<arr[b].second<<' '<<arr[a].second<<endl;
 }
 
 int main() {
