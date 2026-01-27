@@ -1,21 +1,21 @@
 import sys
-
 input = lambda: sys.stdin.readline().rstrip()
 
-try:
-    sys.stdin = open('boj.in', 'r', encoding='utf-8')
-    # sys.stdout = open('boj.out', 'w', encoding='utf-8')
-    pass
-except FileNotFoundError:
-    pass
 
-def divs(n):
-    s = set()
-    for i in range(1, int(n ** 0.5) + 2):
-        if n % i == 0:
-            s.add(i)
-            s.add(n // i)
-    s -= {0, n}
-    return sorted(s)
 
-print(*divs(int(input()) + 1))
+def factorize(n):
+    res = []
+    i = 1
+    while i*i<n:
+        if n%i==0:
+            res.append(i)
+            res.append(n//i)
+        i += 1
+    if i*i==n: res.append(i)
+    return sorted(res)
+
+x = int(input())
+f = factorize(x+1)
+print(*f[:-1])
+        
+    
