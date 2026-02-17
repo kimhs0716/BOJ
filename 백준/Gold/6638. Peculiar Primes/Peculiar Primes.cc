@@ -61,7 +61,7 @@ void solve(ll tc) {
         ll x, y; cin>>x>>y;
         vl ans;
         priority_queue<ll, vl, greater<>> pq;
-        set<ll> vis;
+        unordered_set<ll> vis;
         pq.push(1);
         while (pq.size()) {
             ll t = pq.top(); pq.pop();
