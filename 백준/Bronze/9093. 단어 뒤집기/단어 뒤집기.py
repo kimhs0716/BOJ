@@ -1,2 +1,1 @@
-for _ in range(int(input())):
-    print(' '.join(x[::-1] for x in input().split()))
+for s in [*open(0)][1:]: print(' '.join(x[::-1] for x in s.split()))
