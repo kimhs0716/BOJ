@@ -64,24 +64,21 @@ void solve(ll tc){
     }
     vvl prev(n);
     vl dist(n, INF);
-    function dijk = [&adj, &prev, &dist](ll s) {
-        dist[s] = 0;
-        priority_queue<pll> pq;
-        pq.push({0, s});
-        while (pq.size()) {
-            auto [d, cur] = pq.top(); pq.pop();
-            if (dist[cur] != d) continue;
-            for (auto [nxt, w] : adj[cur]) {
-                if (d+w < dist[nxt]) {
-                    dist[nxt] = d+w;
-                    pq.push({d+w, nxt});
-                    prev[nxt].clear();
-                }
-                if (d+w == dist[nxt]) prev[nxt].push_back(cur);
+    dist[s] = 0;
+    priority_queue<pll, vp, greater<pll>> pq;
+    pq.push({0, s});
+    while (pq.size()) {
+        auto [d, cur] = pq.top(); pq.pop();
+        if (dist[cur] != d) continue;
+        for (auto [nxt, w] : adj[cur]) {
+            if (d+w < dist[nxt]) {
+                dist[nxt] = d+w;
+                pq.push({d+w, nxt});
+                prev[nxt].clear();
             }
+            if (d+w == dist[nxt]) prev[nxt].push_back(cur);
         }
-    };
-    dijk(s);
+    }
     // cout<<dist<<endl;
     // for (i=0;i<n;i++) {
     //     cout<<i<<": "<<prev[i]<<endl;
@@ -110,24 +107,20 @@ void solve(ll tc){
     }
     // cout<<arr<<endl;
     dist = vl(n, INF);
-    function dijk2 = [&adj, &dist, &arr](ll s) {
-        dist[s] = 0;
-        priority_queue<pll> pq;
-        pq.push({0, s});
-        while (pq.size()) {
-            auto [d, cur] = pq.top(); pq.pop();
-            if (dist[cur] != d) continue;
-            for (auto [nxt, w] : adj[cur]) {
-                if (arr[nxt] != 3) continue;
-                if (d+w < dist[nxt]) {
-                    dist[nxt] = d+w;
-                    pq.push({d+w, nxt});
-                }
+    dist[s] = 0;
+    pq.push({0, s});
+    while (pq.size()) {
+        auto [d, cur] = pq.top(); pq.pop();
+        if (dist[cur] != d) continue;
+        for (auto [nxt, w] : adj[cur]) {
+            if (arr[nxt] != 3) continue;
+            if (d+w < dist[nxt]) {
+                dist[nxt] = d+w;
+                pq.push({d+w, nxt});
             }
         }
-        for (auto &x: dist) if (x==INF) x = -1;
-    };
-    dijk2(s);
+    }
+    for (auto &x: dist) if (x==INF) x = -1;
     // cout<<dist<<endl;
     cout<<*max_element(dist.begin(), dist.end())<<endl;
     // cout<<endl;
