@@ -96,19 +96,20 @@ void solve(ll tc){
     ll i, j;
     ll n; cin>>n;
     vl arr(n); cin>>arr;
-    SEG seg(arr);
-    map<ll, ll> pos;
-    bool ans = true;
+    vl L(n+1), R(n+1);
+    for (i=0;i<n;i++) R[arr[i]] = i;
+    for (i=n-1;i>=0;i--) L[arr[i]] = i;
+    set<ll> s;
     for (i=0;i<n;i++) {
         ll x = arr[i];
-        if (pos.contains(x)) {
-            if (seg.query(pos[x], i) > x) ans = false;
+        if (s.size() && *s.begin()<x) {
+            cout<<"No"<<endl;
+            return;
         }
-        else {
-            pos[x] = i;
-        }
+        if (i == L[x]) s.insert(x);
+        if (i == R[x]) s.erase(x);
     }
-    cout<<(ans ? "Yes" : "No")<<endl;
+    cout<<"Yes"<<endl;
 }
 
 int main() {
