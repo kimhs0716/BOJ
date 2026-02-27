@@ -1,0 +1,33 @@
+WITH TS AS (
+    SELECT
+        EMP_NO,
+        AVG(SCORE) AS AVG_SCORE
+    FROM HR_GRADE
+    GROUP BY EMP_NO
+),
+GR AS (
+    SELECT
+        EMP_NO,
+        CASE
+            WHEN AVG_SCORE >= 96 THEN 'S'
+            WHEN AVG_SCORE >= 90 THEN 'A'
+            WHEN AVG_SCORE >= 80 THEN 'B'
+            ELSE 'C'
+        END AS GRADE, 
+        CASE
+            WHEN AVG_SCORE >= 96 THEN 20
+            WHEN AVG_SCORE >= 90 THEN 15
+            WHEN AVG_SCORE >= 80 THEN 10
+            ELSE 0
+        END AS BONUS_RATE
+    FROM TS
+)
+SELECT
+    EMP.EMP_NO,
+    EMP.EMP_NAME,
+    GR.GRADE,
+    (EMP.SAL * GR.BONUS_RATE) DIV 100 AS BONUS
+FROM HR_EMPLOYEES AS EMP
+JOIN GR
+  ON EMP.EMP_NO = GR.EMP_NO
+ORDER BY EMP.EMP_NO ASC;
