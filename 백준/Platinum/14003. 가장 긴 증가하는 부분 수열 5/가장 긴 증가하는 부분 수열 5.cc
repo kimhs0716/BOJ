@@ -1,4 +1,6 @@
 #include <bits/stdc++.h>
+
+#include <utility>
 #pragma GCC optimize ("O3,unroll-loops")
 #pragma GCC target ("avx,avx2,fma")
 
@@ -42,85 +44,42 @@ ostream& operator<<(ostream &os, vector<T> arr) {
     return os<<')';
 }
 
-constexpr ll MOD = 1e9+7;
-// constexpr ll MOD = 998'244'353;
+// constexpr ll MOD = 1e9+7;
+constexpr ll MOD = 998'244'353;
 constexpr ll INF = 1e15;
-
-struct SEG {
-    ll n;
-    vl arr;
-    vp seg;
-    SEG(vl &a) : n(a.size()), arr(a), seg(n<<2) {
-        init(1, 0, n-1);
-    }
-    SEG(ll n) : n(n), arr(n), seg(n<<2, {0, -1}) {}
-    void init(ll i, ll l, ll r) {
-        if (l==r) {
-            seg[i] = {arr[l], l};
-            return;
-        }
-        ll m=l+r>>1;
-        init(i<<1, l, m);
-        init(i<<1|1, m+1, r);
-        seg[i] = max(seg[i<<1], seg[i<<1|1]);
-    }
-    void update(ll i, ll l, ll r, ll tar, ll val) {
-        if (l==r) {
-            arr[l] = val;
-            seg[i] = {arr[l], l};
-            return;
-        }
-        ll m=l+r>>1;
-        if (tar<=m) update(i<<1, l, m, tar, val);
-        else update(i<<1|1, m+1, r, tar, val);
-        seg[i] = max(seg[i<<1], seg[i<<1|1]);
-    }
-    void update(ll tar, ll val) {
-        update(1, 0, n-1, tar, val);
-    }
-    pll query(ll i, ll l, ll r, ll s, ll e) {
-        if (r<s || e<l) return {0, -1};
-        if (s<=l && r<=e) return seg[i];
-        ll m=l+r>>1;
-        return max(query(i<<1, l, m, s, e), query(i<<1|1, m+1, r, s, e));
-    }
-    pll query(ll s, ll e) {
-        return query(1, 0, n-1, s, e);
-    }
-};
 
 void preprocess() {
     ll i, j;
 }
 
-void solve(ll tc) {
+void solve(ll tc){
     ll i, j;
     ll n; cin>>n;
-    vp arr(n);
-    vl pos(n);
+    vl arr(n); cin>>arr;
+    vl prev(n, -1), temp, indices;
     for (i=0;i<n;i++) {
-        cin>>arr[i].first;
-        arr[i].second = -i;
-        pos[i] = arr[i].first;
+        ll idx = lower_bound(temp.begin(), temp.end(), arr[i]) - temp.begin();
+        if (idx == temp.size()) {
+            temp.push_back(arr[i]);
+            indices.push_back(i);
+        }
+        else {
+            temp[idx] = arr[i];
+            indices[idx] = i;
+        }
+        if (idx >= 1) prev[i] = indices[idx-1];
+        // cout<<temp<<endl;
     }
-    sort(arr.rbegin(), arr.rend());
-    SEG seg(n);
-    vl nxt(n), len(n);
-    for (auto [x, idx] : arr) {
-        idx = -idx;
-        auto [mx, mi] = seg.query(idx, n-1);
-        nxt[idx] = mi;
-        len[idx] = mx+1;
-        seg.update(idx, mx+1);
+    // cout<<prev<<endl;
+    cout<<temp.size()<<endl;
+    vl ans;
+    ll cur = indices.back();
+    while (cur != -1) {
+        ans.push_back(arr[cur]);
+        cur = prev[cur];
     }
-    // for (i=0;i<n;i++) cout<<seg.query(i, i).first<<' '; cout<<endl;
-    auto [mx, cur] = seg.query(0, n-1);
-    cout<<mx<<endl;
-    while (cur!=-1) {
-        cout<<pos[cur]<<' ';
-        cur = nxt[cur];
-    }
-    cout<<endl;
+    reverse(ans.begin(), ans.end());
+    for (auto x: ans ) cout<<x<<' '; cout<<endl;
 }
 
 int main() {
@@ -133,4 +92,3 @@ int main() {
         solve(i);
     }
 }
-
