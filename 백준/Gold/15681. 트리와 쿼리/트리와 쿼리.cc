@@ -1,4 +1,6 @@
 #include <bits/stdc++.h>
+
+#include <utility>
 #pragma GCC optimize ("O3,unroll-loops")
 #pragma GCC target ("avx,avx2,fma")
 
@@ -42,15 +44,15 @@ ostream& operator<<(ostream &os, vector<T> arr) {
     return os<<')';
 }
 
-constexpr ll MOD = 1e9+7;
-// constexpr ll MOD = 998'244'353;
+// constexpr ll MOD = 1e9+7;
+constexpr ll MOD = 998'244'353;
 constexpr ll INF = 1e15;
 
 void preprocess() {
-    ll i, j, k;
+    ll i, j;
 }
 
-void solve(ll tc) {
+void solve(ll tc){
     ll i, j;
     ll n, r, q; cin>>n>>r>>q;
     vvl adj(n);
@@ -60,17 +62,16 @@ void solve(ll tc) {
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
-    vl dp(n, -1);
-    function<ll(ll)> dfs = [&dp, &adj, &dfs](ll cur) {
-        ll &ret = dp[cur];
-        ret = 1;
-        for (ll nxt: adj[cur]) {
-            if (dp[nxt] != -1) continue;
-            ret += dfs(nxt);
+    vl dp(n);
+    function<void(ll, ll)> dfs = [&adj, &dp, &dfs](ll cur, ll par) {
+        dp[cur] = 1;
+        for (ll nxt : adj[cur]) {
+            if (nxt == par) continue;
+            dfs(nxt, cur);
+            dp[cur] += dp[nxt];
         }
-        return ret;
     };
-    dfs(r-1);
+    dfs(r-1, -1);
     while (q--) {
         ll x; cin>>x;
         cout<<dp[x-1]<<endl;
@@ -87,4 +88,3 @@ int main() {
         solve(i);
     }
 }
-
