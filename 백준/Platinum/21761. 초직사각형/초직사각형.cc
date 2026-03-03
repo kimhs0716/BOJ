@@ -80,10 +80,10 @@ void solve(ll tc){
             ll dv = pq[3].top() * a*b*c;
             t = max(t, {dv, 3});
         }
-        if (t.second==0) a += t.first;
-        if (t.second==1) b += t.first;
-        if (t.second==2) c += t.first;
-        if (t.second==3) d += t.first;
+        if (t.second==0) a += pq[t.second].top();
+        if (t.second==1) b += pq[t.second].top();
+        if (t.second==2) c += pq[t.second].top();
+        if (t.second==3) d += pq[t.second].top();
         cout<<(char)(t.second+'A')<<' '<<pq[t.second].top()<<endl;
         pq[t.second].pop();
     }
