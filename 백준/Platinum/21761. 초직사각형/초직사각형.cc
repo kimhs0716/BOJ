@@ -55,36 +55,41 @@ void preprocess() {
 void solve(ll tc){
     ll i, j;
     ll n, k; cin>>n>>k;
-    ll a, b, c, d; cin>>a>>b>>c>>d;
-    priority_queue<ll> pq[4];
+    __int128 a, b, c, d;
+    ll t;
+    cin>>t; a = t;
+    cin>>t; b = t;
+    cin>>t; c = t;
+    cin>>t; d = t;
+    priority_queue<__int128> pq[4];
     while (n--) {
         char ch; ll x;
         cin>>ch>>x;
         pq[ch-'A'].push(x);
     }
     while (k--) {
-        pll t = {-1, -1};
+        pair<__int128, __int128> t = {-1, -1};
         if (pq[0].size()) {
-            ll dv = pq[0].top() * b*c*d;
+            __int128 dv = pq[0].top() * b*c*d;
             t = max(t, {dv, 0});
         }
         if (pq[1].size()) {
-            ll dv = pq[1].top() * a*c*d;
+            __int128 dv = pq[1].top() * a*c*d;
             t = max(t, {dv, 1});
         }
         if (pq[2].size()) {
-            ll dv = pq[2].top() * a*b*d;
+            __int128 dv = pq[2].top() * a*b*d;
             t = max(t, {dv, 2});
         }
         if (pq[3].size()) {
-            ll dv = pq[3].top() * a*b*c;
+            __int128 dv = pq[3].top() * a*b*c;
             t = max(t, {dv, 3});
         }
         if (t.second==0) a += pq[t.second].top();
         if (t.second==1) b += pq[t.second].top();
         if (t.second==2) c += pq[t.second].top();
         if (t.second==3) d += pq[t.second].top();
-        cout<<(char)(t.second+'A')<<' '<<pq[t.second].top()<<endl;
+        cout<<(char)(t.second+'A')<<' '<<(ll)pq[t.second].top()<<endl;
         pq[t.second].pop();
     }
 }
