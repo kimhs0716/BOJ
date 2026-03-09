@@ -54,10 +54,25 @@ void preprocess() {
 
 void hanoi(ll n, ll a, ll b, ll c) {
     // move n discs from a to c
-    if (!n) return;
-    hanoi(n-1, a, c, b);
-    cout<<a<<' '<<c<<endl;
-    hanoi(n-1, b, a, c);
+    // if (!n) return;
+    // hanoi(n-1, a, c, b);
+    // cout<<a<<' '<<c<<endl;
+    // hanoi(n-1, b, a, c);
+    vector<array<ll, 5>> st;
+    st.push_back({n, a, b, c, 1});
+    while (st.size()) {
+        auto [n, a, b, c, s] = st.back();
+        st.pop_back();
+        if (!n) continue;
+        if (s==1) {
+            st.push_back({n, a, b, c, 2});
+            st.push_back({n-1, a, c, b, 1});
+        }
+        else if (s==2) {
+            cout<<a<<' '<<c<<endl;
+            st.push_back({n-1, b, a, c, 1});
+        }
+    }
 }
 
 void solve(ll tc){
