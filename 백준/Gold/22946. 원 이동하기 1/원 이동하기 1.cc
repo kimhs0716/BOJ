@@ -76,24 +76,23 @@ void solve(ll tc){
         }
     }
     // for (auto &x : adj) cout<<x<<endl;
-    vl dist(n+1);
-    function<void(ll, ll)> dfs = [&dist, &adj, &dfs](ll cur, ll par) {
+    vl l(n+1), d(n+1);
+    function<void(ll, ll)> dfs = [&l, &d, &adj, &dfs](ll cur, ll par) {
+        ll c0=0, c1=0;
         for (ll nxt : adj[cur]) {
             if (nxt == par) continue;
-            dist[nxt] = dist[cur] + 1;
             dfs(nxt, cur);
+            l[cur] = max(l[cur], l[nxt]+1);
+            d[cur] = max(d[cur], d[nxt]);
+            c1 = max(c1, l[nxt]+1);
+            if (c0<c1) {
+                swap(c0, c1);
+            }
         }
+        d[cur] = max(d[cur], c0+c1);
     };
     dfs(0, -1);
-    ll md = *max_element(dist.begin(), dist.end());
-    ll s = -1;
-    for (i=0;i<=n;i++) if (dist[i]==md) {
-        s = i;
-        break;
-    }
-    dist[s] = 0;
-    dfs(s, -1);
-    cout<<*max_element(dist.begin(), dist.end())<<endl;
+    cout<<*max_element(d.begin(), d.end())<<endl;
 }
 
 int main() {
