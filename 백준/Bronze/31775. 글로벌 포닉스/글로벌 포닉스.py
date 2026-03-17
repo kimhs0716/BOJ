@@ -1,1 +1,1 @@
-print('GPLOONBIAXL'[set(input()[0]for _ in'_'*3)!=set('lkp')::2])
+print('GPLOONBIAXL'[set(x[0]for x in open(0))!=set('lkp')::2])
