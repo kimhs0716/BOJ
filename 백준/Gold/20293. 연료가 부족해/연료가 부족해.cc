@@ -57,12 +57,13 @@ void preprocess() {
 void solve(ll tc){
     ll i, j;
     ll r, c; cin>>r>>c;
-    vvl dp(r, vl(c, INF)), fuel(r, vl(c));
+    vvl dp(r, vl(c, INF));
     dp[r-1][c-1] = 0;
     ll m; cin>>m;
+    map<pll, ll> fuel;
     while (m--) {
         ll x, y, z; cin>>x>>y>>z;
-        fuel[x-1][y-1] = z;
+        fuel[{x-1, y-1}] = z;
     }
     for (ll k=r+c-3;k>=0;k--) {
         for (i=r-1;i>=0;i--) {
@@ -71,7 +72,8 @@ void solve(ll tc){
             if (i!=r-1) dp[i][j] = min(dp[i][j], dp[i+1][j]);
             if (j!=c-1) dp[i][j] = min(dp[i][j], dp[i][j+1]);
             dp[i][j]++;
-            dp[i][j] = max(0LL, dp[i][j] - fuel[i][j]);
+            if (fuel.count({i, j}))
+                dp[i][j] = max(0LL, dp[i][j] - fuel[{i, j}]);
         }
     }
     cout<<dp[0][0]<<endl;
