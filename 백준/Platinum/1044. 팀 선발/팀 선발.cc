@@ -110,16 +110,6 @@ void solve(ll tc){
                     am = min(am, (mask<<r) | it->second);
                 }
             }
-            if (it != rd[l-p].end() && next(it) != rd[l-p].end()) {
-                ll cur = llabs(s + next(it)->first);
-                if (cur<ans) {
-                    ans = cur;
-                    am = (mask<<r) | next(it)->second;
-                }
-                if (cur==ans) {
-                    am = min(am, (mask<<r) | next(it)->second);
-                }
-            }
             if (it != rd[l-p].begin()) {
                 ll cur = llabs(s + prev(it)->first);
                 if (cur<ans) {
