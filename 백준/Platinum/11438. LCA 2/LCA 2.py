@@ -2,9 +2,6 @@ import sys
 input = lambda: sys.stdin.readline().rstrip()
 
 
-sys.setrecursionlimit(2*10**5)
-
-
 n = int(input())
 adj = [[] for _ in range(n)]
 par = [[-1] * n for _ in range(17)]
@@ -17,16 +14,17 @@ for _ in range(n-1):
     adj[a].append(b)
     adj[b].append(a)
 
-def dfs(c, p):
+par[0][0] = 0
+st = [(0, -1)]
+while st:
+    c, p = st.pop()
     for n in adj[c]:
         if n==p: continue
         par[0][n] = c
         depth[n] = depth[c] + 1
-        dfs(n, c)
+        st.append((n, c))
 
-par[0][0] = 0
-dfs(0, -1)
-
+n = len(adj)
 for i in range(1, 17): # find 2^i-th parent
     for j in range(n):
         par[i][j] = par[i-1][par[i-1][j]]
