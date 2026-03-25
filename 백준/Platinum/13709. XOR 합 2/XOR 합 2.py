@@ -7,7 +7,7 @@ class GF2:
         self.basis = set()
 
     def add(self, x):
-        for b in self.basis:
+        for b in sorted(self.basis, reverse=True):
             for i in range(63, -1, -1):
                 if (b>>i)&1: break
             if ((b>>i)&1) and ((x>>i)&1):
