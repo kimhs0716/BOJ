@@ -16,7 +16,7 @@ class GF2:
 
     def get(self):
         ret = 0
-        for b in self.basis:
+        for b in sorted(self.basis, reverse=True):
             if (ret^b) > ret:
                 ret ^= b
         return ret
