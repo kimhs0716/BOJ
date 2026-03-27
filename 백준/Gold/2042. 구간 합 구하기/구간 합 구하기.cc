@@ -1,128 +1,236 @@
-#include<bits/stdc++.h>
-#pragma warning(disable:4996)
-#pragma comment(linker, "/STACK:336777216")
-#pragma GCC optimize("O3,unroll-loops")
-#pragma GCC target("avx,avx2,fma")
+#include <bits/stdc++.h>
+
+#include <utility>
+#pragma GCC optimize ("O3,unroll-loops")
+#pragma GCC target ("avx,avx2,fma")
+
 using namespace std;
 using ll = long long;
-using pll = pair<ll,ll>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using pll = pair<ll, ll>;
 using ld = long double;
-using pld = pair<ld,ld>;
-typedef unsigned long long ull;
-typedef __float128 LD;
-typedef __int128_t LL;
-typedef __uint128_t ULL;
-typedef pair<ll, ll> pii;
-typedef vector<ll> vi;
-typedef vector<ll> vl;
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-#include <ext/pb_ds/detail/standard_policies.hpp>
-using namespace __gnu_pbds;
-template<typename T> using ordered_set
-    = tree<T, null_type, less<>, rb_tree_tag,
-        tree_order_statistics_node_update>;
-template<typename T> using ordered_multiset
-    = tree<T, null_type, less_equal<>, rb_tree_tag,
-        tree_order_statistics_node_update>;
-#define pb(x) push_back(x)
-#define all(x) (x).begin(), (x).end()
-#define rep(i,a,b) for (auto i = (a); i < (b); i++)
-#define each(x, a) for (auto& x: a)
-
-#define debug if constexpr (!ndebug) cout << "[DEBUG] "
-#define debugv(x) if constexpr (!ndebug) cout << "[DEBUG] " << #x << " == " << x << '\n';
-#define debugc(c) if constexpr (!ndebug) { cout << "[DEBUG] "<< #c << ": "; for (const auto& elem : c) cout << elem << ", "; cout << '\n'; }
+using vd = vector<ld>;
+using ull = unsigned long long;
+using vp = vector<pll>;
+using vvp = vector<vp>;
+using tlll = array<ll, 3>;
 
 #define endl '\n'
 
-#ifdef ONLINE_JUDGE
-constexpr bool ndebug = true;
-#else
-constexpr bool ndebug = false;
-#endif
-
-ll gcd(ll a, ll b){return b?gcd(b,a%b):a;}
-ll lcm(ll a, ll b){if(a&&b)return a*(b/gcd(a,b)); return a+b;}
-ll POW(ll a, ll b, ll rem){ll p=1;a%=rem;for(;b;b>>=1,a=(a*a)% rem)if(b&1)p=(p*a)%rem;return p;}
-pll extended_gcd(ll a, ll b){if(b == 0)return {1, 0};auto t = extended_gcd(b, a % b);return {t.second, t.first - t.second * (a / b)};}
-ll modinverse(ll a, ll m){return (extended_gcd(a, m).first % m + m) % m;}
-
 void setup() {
-    if(!ndebug) {
-        freopen("boj.in", "r", stdin);
-        freopen("boj.out", "w", stdout);
-    }
-    else {
-        ios_base::sync_with_stdio(0);
-        cin.tie(0);
-        cout.tie(0);
-    }
+#ifdef KIMHS
+    freopen("input.txt", "r", stdin);
+    freopen("output.txt", "w", stdout);
+#else
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+#endif
 }
 
-void preprocess() {
-    // ll i, j, k;
+template <typename T>
+istream& operator>>(istream &is, vector<T> &arr) {
+    for (auto &x: arr) is>>x;
+    return is;
+}
 
+template <typename T>
+ostream& operator<<(ostream &os, vector<T> arr) {
+    if (arr.size()==0) return os<<"()";
+    os<<'(';
+    for (ll i=0;i<arr.size()-1;i++) os<<arr[i]<<' ';
+    if (arr.size()) os<<arr.back();
+    return os<<')';
 }
 
 constexpr ll MOD = 1e9+7;
-constexpr ll INF = 1e10;
+// constexpr ll MOD = 998'244'353;
+constexpr ll INF = 1e18;
+constexpr ll MAX = 500'000;
+constexpr ld eps = 1e-8;
 
-struct FenwickTree {
-    ll n;
-    vl tree;
-    FenwickTree(ll n, vl &arr) : n(n), tree(n+1) {
-        for (ll i = 0; i < n; i++) {
-            add(i+1, arr[i]);
-        }
-    }
-    ll sum(ll i) {
-        ll ret = 0;
-        while (i > 0) {
-            ret += tree[i];
-            i -= (i & (-i));
-        }
-        return ret;
-    }
-    void add(ll i, ll x) {
-        while (i <= n) {
-            tree[i] += x;
-            i += (i & (-i));
-        }
-    }
-    void set(ll i, ll x) {
-        while (i <= n) {
-            tree[i] += x;
-            i += (i & (-i));
-        }
-    }
-    void range_update(ll l, ll r, ll x) {
-        add(l, x);
-        add(r+1, -x);
-    }
-    ll query(ll i) {
-        return sum(i);
-    }
-    ll range_query(ll l, ll r) {
-        return sum(r) - sum(l-1);
+void preprocess() {
+    ll i, j;
+}
+
+struct Node {
+    Node *p, *l, *r;
+    ll key, val, sum, sz;
+    Node(ll key, ll val) : key(key), val(val), sum(val) {
+        sz = 1;
+        p = l = r = nullptr;
     }
 };
 
-void solve(ll testcase){
-    ll n, m, k; cin >> n >> m >> k;
-    vl arr(n);
-    for (auto &i: arr) cin >> i;
-    FenwickTree tree(n, arr);
-    m += k;
-    while (m--) {
-        ll a, b, c; cin >> a >> b >> c;
-        if (a == 1) {
-            ll diff = c - arr[b-1];
-            arr[b-1] = c;
-            tree.add(b, diff);
+Node *root;
+
+void update(Node *x) {
+    x->sum = x->val;
+    x->sz = 1;
+    if (x->l) {
+        x->sum += x->l->sum;
+        x->sz += x->l->sz;
+    }
+    if (x->r) {
+        x->sum += x->r->sum;
+        x->sz += x->r->sz;
+    }
+}
+
+void rotate(Node *x) {
+    Node *p = x->p, *b = nullptr;
+    if (!p) return;
+    if (x == p->l) {
+        p->l = b = x->r;
+        x->r = p;
+    }
+    else {
+        p->r = b = x->l;
+        x->l = p;
+    }
+    x->p = p->p;
+    p->p = x;
+    if (b) b->p = p;
+    if (x->p) {
+        if (p == x->p->l) x->p->l = x;
+        else x->p->r = x;
+    }
+    update(p);
+    update(x);
+}
+
+void splay(Node *x, Node *g = nullptr) {
+    while (x->p != g) {
+        Node *p = x->p;
+        if (p->p == g) { // zig step
+            rotate(x);
+            break;
+        }
+        Node *pp = p->p;
+        if ((p->l==x) == (pp->l==p)) { // zig-zig step
+            rotate(p); rotate(x);
+        }
+        else { // zig-zag step
+            rotate(x); rotate(x);
+        }
+    }
+    if (!g) root = x;
+}
+
+void insert(ll key, ll val) {
+    Node *p = root;
+    if (!p) { // empty tree
+        Node *x = new Node(key, val);
+        root = x;
+        return;
+    }
+    while (true) {
+        if (key == p->key) return;
+        if (key < p->key) {
+            if (!p->l) break;
+            p = p->l;
         }
         else {
-            cout << tree.range_query(b, c) << endl;
+            if (!p->r) break;
+            p = p->r;
+        }
+    }
+    Node *x = new Node(key, val);
+    x->p = p;
+    if (p->key > x->key) p->l = x;
+    else p->r = x;
+    splay(x);
+}
+
+bool find(ll key) { // find and splay
+    Node *p = root;
+    if (!p) return false;
+    while (p) {
+        if (key == p->key) break;
+        if (key < p->key) {
+            if (!p->l) break;
+            p = p->l;
+        }
+        else {
+            if (!p->r) break;
+            p = p->r;
+        }
+    }
+    splay(p);
+    return key == p->key;
+}
+
+void del(ll key) {
+    if (!find(key)) return;
+    Node *p = root;
+    if (p->l && p->r) { // root has two child nodes
+        root = p->l; // left child is new root node
+        root->p = nullptr;
+        // find maximum child of new root
+        Node *x = root;
+        while (x->r) x = x->r;
+        x->r = p->r;
+        p->r->p = x;
+        delete p;
+        return;
+    }
+    if (p->l) { // root only has left child
+        root = p->l;
+        root->p = nullptr;
+        delete p;
+        return;
+    }
+    if (p->r) { // root only has right child
+        root = p->r;
+        root->p = nullptr;
+        delete p;
+        return;
+    }
+    // root has no child node
+    delete p;
+    root = nullptr;
+}
+
+void kth(ll k) { // splay kth node, 1-based
+    Node *x = root;
+    while (true) {
+        while (x->l && x->l->sz > k) x = x->l;
+        if (x->l) k -= x->l->sz;
+        if (!k--) break;
+        x = x->r;
+    }
+    splay(x);
+}
+
+Node *gather(ll s, ll e) {
+    kth(e+1);
+    auto temp = root;
+    kth(s-1);
+    splay(temp, root);
+    return root->r->l;
+}
+
+void solve(ll tc){
+    ll i, j, k;
+    ll n, q, qq; cin>>n>>q>>qq;
+    insert(0, 0);
+    insert(n+1, 0);
+    for (i=1;i<=n;i++) {
+        ll x; cin>>x;
+        insert(i, x);
+    }
+    q += qq;
+    while (q--) {
+        ll a, b, c; cin>>a>>b>>c;
+        if (a==1) { // update b-th elem to c
+            find(b);
+            root->val = c;
+            update(root);
+        }
+        else { // print sum of [b..c]
+            auto x = gather(b, c);
+            cout<<x->sum<<endl;
         }
     }
 }
@@ -130,10 +238,10 @@ void solve(ll testcase){
 int main() {
     setup();
     preprocess();
-    ll t = 1;
-    // cin >> t;
-    for (ll testcase = 1; testcase <= t; testcase++){
-        solve(testcase);
+
+    ll testcase = 1;
+    // cin >> testcase;
+    for (ll i = 1; i <= testcase; i++) {
+        solve(i);
     }
-    return 0;
 }
