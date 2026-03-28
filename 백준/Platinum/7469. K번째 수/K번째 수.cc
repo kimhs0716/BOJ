@@ -68,18 +68,6 @@ struct PST {
     Node *roots[100005];
     PST(ll n) : n(n), sz(0) {
         roots[sz++] = new Node;
-        init(roots[0], 0, n-1);
-    }
-    void init(Node *x, ll l, ll r) {
-        if (l==r) {
-            return;
-        }
-        ll m = (l+r)>>1;
-        if (!x->l) x->l = new Node;
-        if (!x->r) x->r = new Node;
-        init(x->l, l, m);
-        init(x->r, m+1, r);
-        x->val = x->l->val + x->r->val;
     }
     void update(ll tar, ll diff) {
         Node *x = roots[sz-1];
@@ -91,17 +79,21 @@ struct PST {
             st.push_back(y);
             ll m = (l+r)>>1;
             if (tar<=m) {
+                if (!x->r) x->r = new Node;
                 y->r = x->r;
                 y->l = new Node;
-                y = y->l;
+                if (!x->l) x->l = new Node;
                 x = x->l;
+                y = y->l;
                 r = m;
             }
             else {
+                if (!x->l) x->l = new Node;
                 y->l = x->l;
                 y->r = new Node;
-                y = y->r;
+                if (!x->r) x->r = new Node;
                 x = x->r;
+                y = y->r;
                 l = m+1;
             }
         }
@@ -112,6 +104,7 @@ struct PST {
         }
     }
     ll query(Node *x, ll l, ll r, ll s, ll e) {
+        if (!x) return 0;
         if (r<s || e<l) return 0;
         if (s<=l && r<=e) return x->val;
         ll m = (l+r)>>1;
@@ -123,8 +116,9 @@ struct PST {
     ll kth(Node *x, Node *y, ll l, ll r, ll k) {
         if (l==r) return l;
         ll m = (l+r)>>1;
-        ll diff = y->l->val - x->l->val;
-        if (diff >= k) return kth(x->l, y->l, l, m, k);
+        ll diff = (y && y->l) ? y->l->val : 0;
+        diff -= (x && x->l) ? x->l->val : 0;
+        if (diff >= k) return kth(x ? x->l : nullptr, y ? y->l : nullptr, l, m, k);
         return kth(x->r, y->r, m+1, r, k-diff);
     }
     ll kth(ll i, ll j, ll k) {
