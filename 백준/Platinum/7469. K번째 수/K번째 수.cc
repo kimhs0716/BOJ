@@ -64,16 +64,14 @@ struct Node {
 };
 
 struct PST {
-    vl arr;
     ll n, sz;
     Node *roots[100005];
-    PST(vl a) : arr(a), n(a.size()), sz(0) {
+    PST(ll n) : n(n), sz(0) {
         roots[sz++] = new Node;
         init(roots[0], 0, n-1);
     }
     void init(Node *x, ll l, ll r) {
         if (l==r) {
-            x->val = arr[l];
             return;
         }
         ll m = (l+r)>>1;
@@ -156,7 +154,7 @@ void solve(ll tc){
         return a.second < b.second;
     });
     // for (auto &[x, i]: arr) cout<<x<<' '; cout<<endl;
-    PST pst(vl(num2id.size()));
+    PST pst(num2id.size());
     for (auto [x, i] : arr) pst.update(x, 1);
     while (q--) {
         ll k; cin>>i>>j>>k;
