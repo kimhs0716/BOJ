@@ -54,14 +54,11 @@ void preprocess() {
     ll i, j;
 }
 
-vector<int> seg; // { val, l, r }
 int make_node() {
     static int top = 0;
-    seg.push_back(0);
-    seg.push_back(0);
-    seg.push_back(0);
     return top++;
 }
+int seg[132000005]; // { val, l, r }
 struct PST {
     int n;
     vector<int> roots, st;
