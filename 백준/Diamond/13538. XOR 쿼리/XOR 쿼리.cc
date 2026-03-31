@@ -62,10 +62,6 @@ struct Node {
         val = 0;
         root_idx = 0;
     }
-    ~Node() {
-        if (l && l->root_idx==root_idx) delete l;
-        if (r && r->root_idx==root_idx) delete r;
-    }
 };
 
 Node *roots[1<<19|5];
