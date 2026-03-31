@@ -1,4 +1,6 @@
 #include <bits/stdc++.h>
+
+#include <utility>
 #pragma GCC optimize ("O3,unroll-loops")
 #pragma GCC target ("avx,avx2,fma")
 
@@ -44,13 +46,19 @@ ostream& operator<<(ostream &os, vector<T> arr) {
 
 constexpr ll MOD = 1e9+7;
 // constexpr ll MOD = 998'244'353;
-constexpr ll INF = 1e15;
+constexpr ll INF = 1e18;
+constexpr ll MAX = 500'000;
+constexpr ld eps = 1e-8;
+
+void preprocess() {
+    ll i, j;
+}
 
 struct UF {
     ll n;
-    vl par, rank;
+    vl rank, par;
     vector<tlll> st;
-    UF(ll n) : n(n), par(n), rank(n) {
+    UF(ll n) : n(n), rank(n, 0), par(n) {
         iota(par.begin(), par.end(), 0);
     }
     ll find(ll x) {
@@ -76,8 +84,7 @@ struct UF {
         return find(x) == find(y);
     }
     void rollback() {
-        auto [x, y, z] = st.back();
-        st.pop_back();
+        auto [x, y, z] = st.back(); st.pop_back();
         par[y] = y;
         if (z) rank[x]--;
     }
@@ -86,76 +93,69 @@ struct UF {
 struct OFDC {
     ll n, q;
     vector<tlll> query;
-    vector<vector<pll>> seg;
+    vvp seg;
     UF uf;
     vl ans;
-    OFDC(ll n, vector<tlll> &qq) : n(n), q(qq.size()), query(qq), uf(n), seg((q+1)<<2) {
+    OFDC(ll n, vector<tlll> &qq) : n(n), q(qq.size()), query(qq), seg((q+1)<<2), uf(n) {
         map<pll, ll> in;
         for (ll i=0;i<q;i++) {
-            auto [a, b, c] = query[i];
-            if (b>c) swap(b, c);
-            if (a==1) {
-                in[{b, c}] = i;
+            auto [t, u, v] = qq[i];
+            if (t==1) {
+                in[{u, v}] = i;
             }
-            else if (a==2) {
-                ll s = in[{b, c}];
-                ll e = i;
-                update(1, 0, q, s, e, b, c);
-                in.erase({b, c});
+            else if (t==2) {
+                ll s = in[{u, v}];
+                update(1, 0, q, s, i, u, v);
+                in.erase({u, v});
             }
         }
-        for (auto [e, t] : in) {
-            auto [b, c] = e;
-            update(1, 0, q, t, q, b, c);
+        for (auto [edge, s] : in) {
+            auto [u, v] = edge;
+            update(1, 0, q, s, q, u, v);
         }
         dfs(1, 0, q);
     }
-    void update(ll i, ll l, ll r, ll s, ll e, ll x, ll y) {
+    void update(ll i, ll l, ll r, ll s, ll e, ll u, ll v) {
+        if (r<s || e<l) return;
         if (s<=l && r<=e) {
-            seg[i].push_back({x, y});
+            seg[i].push_back({u, v});
             return;
         }
-        ll m=(l+r)>>1;
-        if (s<=m) update(i<<1, l, m, s, e, x, y);
-        if (m+1<=e) update(i<<1|1, m+1, r, s, e, x, y);
+        ll m = (l+r)>>1;
+        update(i<<1, l, m, s, e, u, v);
+        update(i<<1|1, m+1, r, s, e, u, v);
     }
     void dfs(ll i, ll l, ll r) {
         ll cnt = 0;
-        for (auto [x, y] : seg[i]) {
-            cnt += uf.join(x, y);
+        for (auto [u, v] : seg[i]) {
+            if (uf.join(u, v)) cnt++;
         }
         if (l==r) {
             if (l!=q) {
-                auto [a, b, c] = query[l];
-                if (a==3) {
-                    ans.push_back(uf.same(b, c));
-                }
+                auto [t, u, v] = query[l];
+                if (t==3) ans.push_back(uf.same(u, v));
             }
         }
         else {
-            ll m=l+r>>1;
+            ll m = (l+r)>>1;
             dfs(i<<1, l, m);
             dfs(i<<1|1, m+1, r);
         }
-        while (cnt--)
-            uf.rollback();
+        while (cnt--) uf.rollback();
     }
 };
 
-void preprocess() {
-    ll i, j;
-}
-
-void solve(ll tc) {
-    ll i, j;
+void solve(ll tc){
+    int i, j;
     ll n, m; cin>>n>>m;
-    vector<tlll> q(m);
-    for (auto &[x, y, z] : q) {
-        cin>>x>>y>>z;
-        --y; --z;
+    vector<tlll> query(m);
+    for (auto &[t, u, v] : query) {
+        cin>>t>>u>>v;
+        --u; --v;
+        if (u>v) swap(u, v);
     }
-    OFDC ofdc(n, q);
-    for (auto x: ofdc.ans) cout<<x<<endl;
+    OFDC ofdc(n, query);
+    for (auto x : ofdc.ans) cout<<x<<endl;
 }
 
 int main() {
@@ -168,4 +168,3 @@ int main() {
         solve(i);
     }
 }
-
