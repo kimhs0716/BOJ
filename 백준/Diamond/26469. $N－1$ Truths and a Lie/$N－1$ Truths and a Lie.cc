@@ -116,31 +116,8 @@ struct OFDC {
     vvl seg;
     UF uf;
     vl ans;
-    OFDC(ll n, ll k) : n(n), uf(k), edges(n) {
+    OFDC(ll n, ll k) : n(n), uf(k), edges(n), seg(n<<2) {
         query.reserve(n<<2);
-    }
-    void build() {
-        q = query.size();
-        seg.resize(q<<2);
-        vl in(n);
-        for (ll i=0;i<q;i++) {
-            auto [t, idx] = query[i];
-            if (t==1) {
-                auto [u, v, w] = edges[idx];
-                in[idx] = i;
-            }
-            else if (t==2) {
-                auto [u, v, w] = edges[idx];
-                update(1, 0, q-1, in[idx], i, idx);
-                in[idx] = -1;
-            }
-        }
-        for (ll i=0;i<n;i++) {
-            if (in[i] == -1) continue;
-            auto [u, v, w] = edges[i];
-            update(1, 0, q-1, in[i], q-1, i);
-        }
-        dfs(1, 0, q-1);
     }
     void update(ll i, ll l, ll r, ll s, ll e, ll idx) {
         if (r<s || e<l) return;
@@ -158,8 +135,7 @@ struct OFDC {
             uf.join(u, v, w);
         }
         if (l==r) {
-            ll t = query[l].first;
-            if (t==3) ans.push_back(uf.has_contradiction);
+            ans.push_back(uf.has_contradiction);
         }
         else {
             ll m = (l+r)>>1;
@@ -182,15 +158,11 @@ void solve(ll tc){
             swap(u, v);
             w = -w;
         }
-        ofdc.query.push_back({1, i});
         ofdc.edges[i] = {u, v, w};
+        if (i != 0) ofdc.update(1, 0, n-1, 0, i-1, i);
+        if (i != n-1) ofdc.update(1, 0, n-1, i+1, n-1, i);
     }
-    for (i=0;i<n;i++) {
-        ofdc.query.push_back({2, i});
-        ofdc.query.push_back({3, -1});
-        ofdc.query.push_back({1, i});
-    }
-    ofdc.build();
+    ofdc.dfs(1, 0, n-1);
     for (i=0;i<n;i++) {
         if (ofdc.ans[i]==0) {
             cout<<i+1<<endl;
