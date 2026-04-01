@@ -64,9 +64,12 @@ struct UF {
         has_contradiction = false;
     }
     pll find(ll x) {
-        if (par[x] == x) return {x, 0};
-        auto [root, diff] = find(par[x]);
-        return {root, dist[x] + diff};
+        ll d = 0;
+        while (par[x] != x) {
+            d += dist[x];
+            x = par[x];
+        }
+        return {x, d};
     }
     void join(ll x, ll y, ll w) {
         auto [px, dx] = find(x);
@@ -110,7 +113,7 @@ struct OFDC {
     ll n, k, q;
     vp query;
     vector<tlll> edges;
-    vector<vector<tlll>> seg;
+    vvl seg;
     UF uf;
     vl ans;
     OFDC(ll n, ll k) : n(n), uf(k), edges(n) {
@@ -128,29 +131,30 @@ struct OFDC {
             }
             else if (t==2) {
                 auto [u, v, w] = edges[idx];
-                update(1, 0, q-1, in[idx], i, u, v, w);
+                update(1, 0, q-1, in[idx], i, idx);
                 in[idx] = -1;
             }
         }
         for (ll i=0;i<n;i++) {
             if (in[i] == -1) continue;
             auto [u, v, w] = edges[i];
-            update(1, 0, q-1, in[i], q-1, u, v, w);
+            update(1, 0, q-1, in[i], q-1, i);
         }
         dfs(1, 0, q-1);
     }
-    void update(ll i, ll l, ll r, ll s, ll e, ll u, ll v, ll w) {
+    void update(ll i, ll l, ll r, ll s, ll e, ll idx) {
         if (r<s || e<l) return;
         if (s<=l && r<=e) {
-            seg[i].push_back({u, v, w});
+            seg[i].push_back(idx);
             return;
         }
         ll m = (l+r)>>1;
-        update(i<<1, l, m, s, e, u, v, w);
-        update(i<<1|1, m+1, r, s, e, u, v, w);
+        update(i<<1, l, m, s, e, idx);
+        update(i<<1|1, m+1, r, s, e, idx);
     }
     void dfs(ll i, ll l, ll r) {
-        for (auto [u, v, w] : seg[i]) {
+        for (ll idx : seg[i]) {
+            auto [u, v, w] = edges[idx];
             uf.join(u, v, w);
         }
         if (l==r) {
