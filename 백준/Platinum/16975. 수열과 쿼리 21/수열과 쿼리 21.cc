@@ -1,19 +1,27 @@
 #include <bits/stdc++.h>
+
+#include <utility>
 #pragma GCC optimize ("O3,unroll-loops")
 #pragma GCC target ("avx,avx2,fma")
 
-#define endl '\n'
 using namespace std;
 using ll = long long;
 using vl = vector<ll>;
 using vvl = vector<vl>;
 using pll = pair<ll, ll>;
 using ld = long double;
+using vd = vector<ld>;
+using ull = unsigned long long;
+using vp = vector<pll>;
+using vvp = vector<vp>;
+using tlll = array<ll, 3>;
+
+#define endl '\n'
 
 void setup() {
 #ifdef KIMHS
-    freopen("boj.in", "r", stdin);
-    freopen("boj.out", "w", stdout);
+    freopen("input.txt", "r", stdin);
+    freopen("output.txt", "w", stdout);
 #else
     ios::sync_with_stdio(0);
     cin.tie(0);
@@ -21,71 +29,97 @@ void setup() {
 #endif
 }
 
+template <typename T>
+istream& operator>>(istream &is, vector<T> &arr) {
+    for (auto &x: arr) is>>x;
+    return is;
+}
+
+template <typename T>
+ostream& operator<<(ostream &os, vector<T> arr) {
+    if (arr.size()==0) return os<<"()";
+    os<<'(';
+    for (ll i=0;i<arr.size()-1;i++) os<<arr[i]<<' ';
+    if (arr.size()) os<<arr.back();
+    return os<<')';
+}
+
 constexpr ll MOD = 1e9+7;
-constexpr ll INF = 2e18;
+// constexpr ll MOD = 998'244'353;
+constexpr ll INF = 1e18;
+constexpr ld eps = 1e-8;
 
-// usage: iterSEG(n, arr); update(tar, val); ll sum = query(qs, qe);
-// memo : 0-indexed
-struct iterSEG {
+void preprocess() {
+    ll i, j;
+}
+
+struct SEG {
     ll n;
-    vl seg;
-
-    iterSEG(ll size,vl& arr){
-        n=1; while (n<size) n<<=1;
-        seg.assign(2*n,0);
-        for (ll i=0;i<size;++i) seg[i+n]=arr[i];
-        for (ll i=n-1;i>0;--i) seg[i]=seg[i<<1]+seg[i<<1|1];
+    vl seg, lazy;
+    SEG(vl &arr) : n(arr.size()), seg(n<<2), lazy(n<<2) {
+        init(1, 0, n-1, arr);
     }
-
-    void update(ll tar, ll val) {
-        ll p=tar+n;
-        seg[p]=val;
-        for (p>>=1;p;p>>=1) seg[p]=seg[p<<1]+seg[p<<1|1];
-    }
-
-    ll query(ll l,ll r) {
-        ll res=0;
-        for (l+=n,r+=n;l<=r;l>>=1,r>>=1) {
-            if (l&1) res+=seg[l++];
-            if (!(r&1)) res+=seg[r--];
+    void init(ll i, ll l, ll r, const vl &arr) {
+        if (l==r) {
+            seg[i] = arr[l];
+            return;
         }
-        return res;
+        ll m = (l+r)>>1;
+        init(i<<1, l, m, arr);
+        init(i<<1|1, m+1, r, arr);
+        seg[i] = seg[i<<1] + seg[i<<1|1];
+    }
+    void push(ll i, ll l, ll r) {
+        if (!lazy[i]) return;
+        ll len = r-l+1;
+        seg[i] += len * lazy[i];
+        if (l<r) {
+            lazy[i<<1] += lazy[i];
+            lazy[i<<1|1] += lazy[i];
+        }
+        lazy[i] = 0;
+    }
+    void update(ll i, ll l, ll r, ll s, ll e, ll diff) {
+        if (r<s || e<l) return;
+        if (s<=l && r<=e) {
+            lazy[i] += diff;
+            return;
+        }
+        ll m = (l+r)>>1;
+        if (s<=m) update(i<<1, l, m, s, e, diff);
+        if (m+1<=e) update(i<<1|1, m+1, r, s, e, diff);
+    }
+    void update(ll s, ll e, ll diff) {
+        update(1, 0, n-1, s, e, diff);
+    }
+    ll query(ll i, ll l, ll r, ll s, ll e) {
+        push(i, l, r);
+        if (r<s || e<l) return 0;
+        if (s<=l && r<=e) return seg[i];
+        ll m = (l+r)>>1;
+        return query(i<<1, l, m, s, e) + query(i<<1|1, m+1, r, s, e);
+    }
+    ll query(ll s, ll e) {
+        return query(1, 0, n-1, s, e);
     }
 };
 
-void preprocess() {
-    ll i, j, k;
-}
-
-void solve(ll tc) {
-    ll i, j, k;
+void solve(ll tc){
+    ll i, j;
     ll n; cin>>n;
-    vl arr(n);
-    ll prev;
-    cin >> prev;
-    arr[0] = prev;
-    for (i=1;i<n;++i) {
-        ll x; cin>>x;
-        arr[i]=x-prev;
-        prev=x;
-    }
-    iterSEG seg(n, arr);
+    vl arr(n); cin>>arr;
+    SEG seg(arr);
     ll q; cin>>q;
     while (q--) {
-        ll type; cin>>type;
-        if (type==1) {
-            cin>>i>>j>>k;
-            arr[i-1]+=k;
-            seg.update(i-1, arr[i-1]);
-            if (j<n) {
-                arr[j]-=k;
-                seg.update(j, arr[j]);
-            }
+        ll a, b, c, d; cin>>a>>b;
+        if (a==1) {
+            cin>>c>>d;
+            seg.update(b-1, c-1, d);
         }
         else {
-            cin>>i;
-            cout<<seg.query(0, i-1)<<endl;
+            cout<<seg.query(b-1, b-1)<<endl;
         }
+        // for (i=0;i<n;i++) cout<<seg.query(i, i)<<' '; cout<<endl;
     }
 }
 
