@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 
+#include <utility>
 #pragma GCC optimize ("O3,unroll-loops")
 #pragma GCC target ("avx,avx2,fma")
 
@@ -86,21 +87,28 @@ struct UF {
 
 struct OFDC {
     ll n, q;
-    vector<tlll> query;
+    vp query;
     vvp seg;
     UF uf;
     vl ans;
-    OFDC(ll n, vector<tlll> &qq) : n(n), q(qq.size()), query(qq), seg(q<<2), uf(n) {
+    OFDC(ll n, vector<tlll> &qq) : n(n), q(0), uf(n) {
         map<pll, ll> in;
-        for (ll i=0;i<q;i++) {
+        for (auto [t, u, v] : qq) {
+            if (t==3) q++;
+        }
+        seg.resize(q<<2);
+        for (ll i=0;i<qq.size();i++) {
             auto [t, u, v] = qq[i];
             if (t==1) {
-                in[{u, v}] = i;
+                in[{u, v}] = query.size();
             }
             else if (t==2) {
                 ll s = in[{u, v}];
-                update(1, 0, q-1, s, i, u, v);
+                update(1, 0, q-1, s, query.size()-1, u, v);
                 in.erase({u, v});
+            }
+            else {
+                query.push_back({u, v});
             }
         }
         for (auto [edge, s] : in) {
@@ -110,7 +118,7 @@ struct OFDC {
         dfs(1, 0, q-1);
     }
     void update(ll i, ll l, ll r, ll s, ll e, ll u, ll v) {
-        if (r<s || e<l) return;
+        if (r<s || e<l || e<s) return;
         if (s<=l && r<=e) {
             seg[i].push_back({u, v});
             return;
@@ -125,8 +133,8 @@ struct OFDC {
             if (uf.join(u, v)) cnt++;
         }
         if (l==r) {
-            auto [t, u, v] = query[l];
-            if (t==3) ans.push_back(uf.same(u, v));
+            auto [u, v] = query[l];
+            ans.push_back(uf.same(u, v));
         }
         else {
             ll m = (l+r)>>1;
