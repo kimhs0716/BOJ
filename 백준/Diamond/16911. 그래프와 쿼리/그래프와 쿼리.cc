@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
 
-#include <utility>
 #pragma GCC optimize ("O3,unroll-loops")
 #pragma GCC target ("avx,avx2,fma")
 
@@ -144,10 +143,9 @@ void solve(ll tc){
     vector<tlll> query(m);
     for (auto &[t, u, v] : query) {
         cin>>t>>u>>v;
-        --u; --v;
         if (u>v) swap(u, v);
     }
-    OFDC ofdc(n, query);
+    OFDC ofdc(n+1, query);
     for (auto x : ofdc.ans) cout<<x<<endl;
 }
 
