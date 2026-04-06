@@ -1,88 +1,98 @@
 #include <bits/stdc++.h>
 
-#define endl '\n'
-#define FASTIO ios::sync_with_stdio(0), cin.tie(0), cout.tie(0)
-
-void _init() {
-#ifndef BOJ
-    freopen("boj.in", "r", stdin);
-#endif // BOJ
-}
+#include <utility>
+#pragma GCC optimize ("O3,unroll-loops")
+#pragma GCC target ("avx,avx2,fma")
 
 using namespace std;
-
 using ll = long long;
-using vi = vector<int>;
-using pii = pair<int, int>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
+using pll = pair<ll, ll>;
+using ld = long double;
+using vd = vector<ld>;
+using ull = unsigned long long;
+using vp = vector<pll>;
+using vvp = vector<vp>;
+using tlll = array<ll, 3>;
 
-constexpr int INF = 2e8;
+#define endl '\n'
 
-class Graph {
-public:
-    int n;
-    vector<pii> max_l;
-    vector<vector<pii>> adj;
-    vi dist, prev;
+void setup() {
+#ifdef KIMHS
+    freopen("input.txt", "r", stdin);
+    freopen("output.txt", "w", stdout);
+#else
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+#endif
+}
 
-    Graph(int size) {
-        n = size;
-        adj = vector<vector<pii>>(n);
-        dist = vi(n, INF);
-        prev = vi(n, -1);
+template <typename T>
+istream& operator>>(istream &is, vector<T> &arr) {
+    for (auto &x: arr) is>>x;
+    return is;
+}
+
+template <typename T>
+ostream& operator<<(ostream &os, vector<T> arr) {
+    if (arr.size()==0) return os<<"()";
+    os<<'(';
+    for (ll i=0;i<arr.size()-1;i++) os<<arr[i]<<' ';
+    if (arr.size()) os<<arr.back();
+    return os<<')';
+}
+
+constexpr ll MOD = 1e9+7;
+// constexpr ll MOD = 998'244'353;
+constexpr ll INF = 1e18;
+constexpr ld eps = 1e-8;
+
+void preprocess() {
+    ll i, j;
+}
+
+void solve(ll tc){
+    ll i, j;
+    ll n, m; cin>>n>>m;
+    vvp adj(n);
+    while (m--) {
+        ll u, v, w; cin>>u>>v>>w;
+        --u; --v;
+        adj[u].push_back({v, w});
+        // adj[v].push_back({u, w});
     }
-
-    void add_edge(int u, int v, int w) {
-        adj[u].push_back({ v, w });
-    }
-
-    void dijkstra(int start) {
-        dist[start] = 0;
-        priority_queue<pii, vector<pii>, greater<pii>> pq;
-        for (auto nxt : adj[start]) {
-            if (dist[nxt.first] > nxt.second) {
-                dist[nxt.first] = nxt.second;
-                pq.push({ dist[nxt.first], nxt.first });
-                prev[nxt.first] = start;
+    ll s, e; cin>>s>>e;
+    --s; --e;
+    vl dist(n, INF), vis(n);
+    dist[s] = 0;
+    priority_queue<pll, vp, greater<>> pq;
+    pq.push({0, s});
+    while (pq.size()) {
+        auto [d, cur] = pq.top(); pq.pop();
+        if (d != dist[cur]) continue;
+        if (vis[cur]) continue;
+        for (auto [nxt, w] : adj[cur]) {
+            if (vis[nxt]) continue;
+            if (dist[nxt] > dist[cur]+w) {
+                dist[nxt] = dist[cur]+w;
+                pq.push({dist[nxt], nxt});
             }
         }
-        while (!pq.empty()) {
-            int u, w;
-            tie(w, u) = pq.top();
-            pq.pop();
-            if (dist[u] != w) continue;
-            for (pii nxt : adj[u]) {
-                if (dist[nxt.first] > dist[u] + nxt.second) {
-                    dist[nxt.first] = dist[u] + nxt.second;
-                    pq.push({ dist[nxt.first], nxt.first });
-                    prev[nxt.first] = u;
-                }
-            }
-        }
+        vis[cur] = 1;
     }
-
-    void print() {
-        for (int i = 0; i < n; i++) {
-            if (dist[i] >= INF) cout << "INF" << endl;
-            else cout << dist[i] << endl;
-        }
-    }
-};
+    cout<<dist[e]<<endl;
+    // cout<<dist<<endl;
+}
 
 int main() {
-    FASTIO;
-    _init();
+    setup();
+    preprocess();
 
-    int v, e; cin >> v >> e;
-    Graph g(v);
-    while (e--) {
-        int a, b, w; cin >> a >> b >> w;
-        --a, --b;
-        g.add_edge(a, b, w);
+    ll testcase = 1;
+    // cin >> testcase;
+    for (ll i = 1; i <= testcase; i++) {
+        solve(i);
     }
-    int start, goal; cin >> start >> goal;
-    --start, --goal;
-    g.dijkstra(start);
-    cout << g.dist[goal] << endl;
-
-    return 0;
 }
