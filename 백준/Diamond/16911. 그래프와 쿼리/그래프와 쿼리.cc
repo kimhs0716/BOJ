@@ -56,9 +56,9 @@ void preprocess() {
 
 struct UF {
     ll n;
-    vl rank, par;
-    vector<tlll> st;
-    UF(ll n) : n(n), rank(n, 0), par(n) {
+    vl sz, par;
+    vp st;
+    UF(ll n) : n(n), sz(n, 1), par(n) {
         iota(par.begin(), par.end(), 0);
     }
     ll find(ll x) {
@@ -69,24 +69,19 @@ struct UF {
         x = find(x);
         y = find(y);
         if (x==y) return false;
-        if (rank[x] < rank[y]) swap(x, y);
+        if (sz[x] < sz[y]) swap(x, y);
         par[y] = x;
-        if (rank[x] == rank[y]) {
-            rank[x]++;
-            st.push_back({x, y, 1});
-        }
-        else {
-            st.push_back({x, y, 0});
-        }
+        sz[x] += sz[y];
+        st.push_back({x, y});
         return true;
     }
     bool same(ll x, ll y) {
         return find(x) == find(y);
     }
     void rollback() {
-        auto [x, y, z] = st.back(); st.pop_back();
+        auto [x, y] = st.back(); st.pop_back();
         par[y] = y;
-        if (z) rank[x]--;
+        sz[x] -= sz[y];
     }
 };
 
@@ -96,7 +91,7 @@ struct OFDC {
     vvp seg;
     UF uf;
     vl ans;
-    OFDC(ll n, vector<tlll> &qq) : n(n), q(qq.size()), query(qq), seg((q+1)<<2), uf(n) {
+    OFDC(ll n, vector<tlll> &qq) : n(n), q(qq.size()), query(qq), seg(q<<2), uf(n) {
         map<pll, ll> in;
         for (ll i=0;i<q;i++) {
             auto [t, u, v] = qq[i];
@@ -105,15 +100,15 @@ struct OFDC {
             }
             else if (t==2) {
                 ll s = in[{u, v}];
-                update(1, 0, q, s, i, u, v);
+                update(1, 0, q-1, s, i, u, v);
                 in.erase({u, v});
             }
         }
         for (auto [edge, s] : in) {
             auto [u, v] = edge;
-            update(1, 0, q, s, q, u, v);
+            update(1, 0, q-1, s, q-1, u, v);
         }
-        dfs(1, 0, q);
+        dfs(1, 0, q-1);
     }
     void update(ll i, ll l, ll r, ll s, ll e, ll u, ll v) {
         if (r<s || e<l) return;
@@ -131,10 +126,8 @@ struct OFDC {
             if (uf.join(u, v)) cnt++;
         }
         if (l==r) {
-            if (l!=q) {
-                auto [t, u, v] = query[l];
-                if (t==3) ans.push_back(uf.same(u, v));
-            }
+            auto [t, u, v] = query[l];
+            if (t==3) ans.push_back(uf.same(u, v));
         }
         else {
             ll m = (l+r)>>1;
