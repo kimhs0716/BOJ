@@ -1,0 +1,1 @@
+for i in range(int(input())):print(int(bin(int(input()))[2:],3))

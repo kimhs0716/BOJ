@@ -1,0 +1,1 @@
+exec('print(eval("0b"+input()));'*int(input()))

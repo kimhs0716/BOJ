@@ -1,0 +1,1 @@
+i=input;exec('s=sum([int(i())for _ in" "*int(i())]);print([f"{s:+d}"[0],0][not s]);'*3)

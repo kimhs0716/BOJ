@@ -1,0 +1,1 @@
+i=input;i();s=i();print(min(map(s.count,'uospc')))

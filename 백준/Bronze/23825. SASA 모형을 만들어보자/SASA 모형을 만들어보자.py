@@ -1,0 +1,1 @@
+(lambda a,b:print(min(a,b)//2))(*map(int,input().split()))

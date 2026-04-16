@@ -1,0 +1,1 @@
+input();arr=list(map(int,input().split()));print("No" if(sum(arr)%3 or arr.count(2)>arr.count(1)) else "Yes")

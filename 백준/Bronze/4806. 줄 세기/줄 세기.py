@@ -1,0 +1,1 @@
+print(len(list(__import__('sys').stdin)))

@@ -1,0 +1,1 @@
+print('NESW'[sum(map(int,open(0)))%4])

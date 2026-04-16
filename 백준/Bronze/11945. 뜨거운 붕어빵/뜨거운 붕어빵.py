@@ -1,0 +1,1 @@
+i=input;n=i().split()[0];exec('print(i()[::-1]);'*int(n))

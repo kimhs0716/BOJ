@@ -1,0 +1,1 @@
+print(max((lambda d:list(d.items()) + [('a',(d['6']+d['9']+1)//2)])((lambda n:{i:n.count(i) for i in'0123456789'})(input())),key=lambda x:0 if x[0] in '69' else x[1])[1])

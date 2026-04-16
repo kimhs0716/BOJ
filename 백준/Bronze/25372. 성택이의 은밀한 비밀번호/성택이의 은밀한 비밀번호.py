@@ -1,0 +1,1 @@
+i=input;exec("print('nyoe s'[6<=len(i())<=9::2]);"*int(i()))
