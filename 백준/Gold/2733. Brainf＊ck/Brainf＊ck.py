@@ -1,5 +1,5 @@
 import sys
-input = lambda: sys.stdin.readline()[:-1]
+input = lambda: sys.stdin.readline().rstrip('\n')
 
 
 mem = [0] * 32768
@@ -11,9 +11,9 @@ def ev(code):
         raise SyntaxError
     
     if '[' in code:
-        cnt = 1
+        cnt = 0
         first_open = code.find('[')
-        idx = first_open + 1
+        idx = first_open
         while True:
             if code[idx] == '[': cnt += 1
             if code[idx] == ']': cnt -= 1
@@ -22,6 +22,7 @@ def ev(code):
                 break
             if cnt == 0:
                 break
+        if cnt: raise SyntaxError
         ev(code[:first_open])
         repeat(code[first_open + 1:idx - 1])
         ev(code[idx:])
